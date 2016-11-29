@@ -1,34 +1,36 @@
 MODULE main
 	VAR
 		semaphore : boolean;
-		proc1 : process user(semaphore);
-		proc2 : process user(semaphore);
+		proc1 : process lights(semaphore);
+		proc2 : process lights(semaphore);
 		
 	ASSIGN
 		init(semaphore) := FALSE;
-
+		
 	SPEC AG ! (proc1.state = green & proc2.state = green)
-
-MODULE user(semaphore)
+	SPEC AG (proc1.state = red -> EF proc1.state = green)
+	SPEC AG (proc2.state = red -> EF proc2.state = green)
+	SPEC AG (proc2.state = red -> EF proc1.state = green)
+MODULE lights(semaphore)
 	VAR
-		state : {red, yellow, green};
+		state : {red, yellow, green, redyellow};
 
 	ASSIGN
 		init(state) := red;
 		next(state) := 
 			case
+				state = red & !semaphore: redyellow;
+				state = redyellow : green;
 				state = green : yellow;
-				state = yellow : red;
-				state = red & !semaphore: green;
-			TRUE : state;
+				state = yellow  : red;
+				TRUE : state;
 			esac;
 		next(semaphore) :=
 			case
 				state = red : TRUE;
-				state = green : FALSE;
 				state = yellow : FALSE;
 				TRUE : semaphore;
-				esac;
-		
-		FAIRNESS
+			esac;
+			
+FAIRNESS
 	running
