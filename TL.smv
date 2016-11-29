@@ -1,30 +1,34 @@
 MODULE main
-VAR
-semaphore : boolean;
-proc1 : process user(semaphore);
-proc2 : process user(semaphore);
-ASSIGN
-init(semaphore) := FALSE;
-SPEC AG ! (proc1.state = green & proc2.state = green)
+	VAR
+		semaphore : boolean;
+		proc1 : process user(semaphore);
+		proc2 : process user(semaphore);
+		
+	ASSIGN
+		init(semaphore) := FALSE;
+
+	SPEC AG ! (proc1.state = green & proc2.state = green)
 
 MODULE user(semaphore)
-VAR
-state : {red, yellow, green};
-ASSIGN
-init(state) := red;
-next(state) :=
-case
-state = green : yellow;
-state = yellow : red;
-state = red & !semaphore: green;
-TRUE : state;
-esac;
-next(semaphore) :=
-case
-state = red : TRUE;
-state = green : FALSE;
-state = yellow : FALSE;
-TRUE : semaphore;
-esac;
-FAIRNESS
-running
+	VAR
+		state : {red, yellow, green};
+
+	ASSIGN
+		init(state) := red;
+		next(state) := 
+			case
+				state = green : yellow;
+				state = yellow : red;
+				state = red & !semaphore: green;
+			TRUE : state;
+			esac;
+		next(semaphore) :=
+			case
+				state = red : TRUE;
+				state = green : FALSE;
+				state = yellow : FALSE;
+				TRUE : semaphore;
+				esac;
+		
+		FAIRNESS
+	running
