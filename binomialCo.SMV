@@ -1,13 +1,20 @@
 MODULE main
-	DEFINE
-		n := 8;
-		k := 6;
-		b := 1;
-		y2 := 1;
-		y1 := n;
 	VAR
+		n  : 0..15;
+		k  : 0..15;
+		b  : 0..30705;
+		y2 : 0..15;
+		y1 : 0..15;
 		proc1 : process ALG1(b,y1,y2,n,k);
 		proc2 : process ALG2(b,y1,y2,n,k);
+	ASSIGN
+		init(n) := 8;
+		init(b) := 1;
+		init(k) := 6;
+		init(y1) := n;
+		init(y2) := 1;
+
+SPEC AG AF(proc1.state = l3 & proc2.state = m4)
 
 MODULE ALG1(b,y1,y2,n,k)
 	VAR
@@ -22,15 +29,19 @@ MODULE ALG1(b,y1,y2,n,k)
 				state = l0 & (y1 <= (n - k)): l3;
 				state = l1 : l2;
 				state = l2 : l0;
+				TRUE : state;
 			esac;
 		next(b) :=
 			case
 				state = l1 : b * y1;
+				TRUE : b;
 			esac;
 		next(y1) :=
 			case
 				state = l2 : y1 - 1;
+				TRUE : y1;
 			esac;
+			
 MODULE ALG2(b,y1,y2,n,k)
 	VAR
 		state : {m0,m1,m2,m3,m4};
@@ -44,12 +55,15 @@ MODULE ALG2(b,y1,y2,n,k)
 				state = m1 & ((y1 + y2) <= n) : m2;
 				state = m2 : m3;
 				state = m3 : m0;
+				TRUE : state;
 			esac;
 		next(b) :=
 			case
 				state = m2 : b / y2;
+				TRUE : b;
 			esac;
 		next(y2) :=
 			case
 				state = m3 : y2 + 1;
+				TRUE : y2;
 			esac;
