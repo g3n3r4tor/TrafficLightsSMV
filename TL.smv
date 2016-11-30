@@ -4,13 +4,18 @@ MODULE main
 		proc1 : process lights(semaphore);
 		proc2 : process lights(semaphore);
 		
+
 	ASSIGN
 		init(semaphore) := FALSE;
 		
 	SPEC AG ! (proc1.state = green & proc2.state = green)
+	SPEC AG ! (proc1.state = yellow & proc2.state = yellow)
+	SPEC AG ! (proc1.state = redyellow & proc2.state = redyellow)
+	SPEC EF (proc1.state = red & proc2.state = red)
 	SPEC AG (proc1.state = red -> EF proc1.state = green)
 	SPEC AG (proc2.state = red -> EF proc2.state = green)
 	SPEC AG (proc2.state = red -> EF proc1.state = green)
+
 MODULE lights(semaphore)
 	VAR
 		state : {red, yellow, green, redyellow};
@@ -22,7 +27,7 @@ MODULE lights(semaphore)
 				state = red & !semaphore: redyellow;
 				state = redyellow : green;
 				state = green : yellow;
-				state = yellow  : red;
+				state = yellow & semaphore : red;
 				TRUE : state;
 			esac;
 		next(semaphore) :=
