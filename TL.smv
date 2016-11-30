@@ -15,6 +15,8 @@ MODULE main
 	SPEC AG (proc1.state = red -> EF proc1.state = green)
 	SPEC AG (proc2.state = red -> EF proc2.state = green)
 	SPEC AG (proc2.state = red -> EF proc1.state = green)
+	SPEC EF (proc1.state = green)
+	SPEC EF (proc2.state = green)
 
 MODULE lights(semaphore)
 	VAR
