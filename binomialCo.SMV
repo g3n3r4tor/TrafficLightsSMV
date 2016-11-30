@@ -2,35 +2,24 @@ MODULE main
 	VAR
 		n  : 0..15;
 		k  : 0..15;
-		b  : 0..30705;
-		y2 : 0..15;
+		b  : 0..50000;
+		y2 : 1..16;
 		y1 : 0..15;
 		proc1 : process ALG1(b,y1,y2,n,k);
 		proc2 : process ALG2(b,y1,y2,n,k);
 	ASSIGN
-		init(n) := 8;
+		init(n) := 3;
 		init(b) := 1;
-		init(k) := 6;
+		init(k) := 2;
 		init(y1) := n;
 		init(y2) := 1;
 
-SPEC AG AF(proc1.state = l3 & proc2.state = m4)
-
 MODULE ALG1(b,y1,y2,n,k)
+
 	VAR
 		state : {l0, l1, l2, l3};
-		
 	ASSIGN
-		
 		init(state) := l0;
-		next(state) :=
-			case
-				state = l0 & (y1 > (n - k)) : l1;
-				state = l0 & (y1 <= (n - k)): l3;
-				state = l1 : l2;
-				state = l2 : l0;
-				TRUE : state;
-			esac;
 		next(b) :=
 			case
 				state = l1 : b * y1;
@@ -41,22 +30,20 @@ MODULE ALG1(b,y1,y2,n,k)
 				state = l2 : y1 - 1;
 				TRUE : y1;
 			esac;
-			
+		next(state) :=
+			case
+				state = l0 & (y1 > (n - k)) : l1;
+				state = l0 & (y1 <= (n - k)): l3;
+				state = l1 : l2;
+				state = l2 : l0;
+				TRUE : state;
+			esac;
 MODULE ALG2(b,y1,y2,n,k)
 	VAR
 		state : {m0,m1,m2,m3,m4};
 	
 	ASSIGN
 		init(state) := m0;
-		next(state) :=
-			case
-				state = m0 & (y2 > k) : m4;
-				state = m0 & (y2 <= k) : m1;
-				state = m1 & ((y1 + y2) <= n) : m2;
-				state = m2 : m3;
-				state = m3 : m0;
-				TRUE : state;
-			esac;
 		next(b) :=
 			case
 				state = m2 : b / y2;
@@ -67,3 +54,16 @@ MODULE ALG2(b,y1,y2,n,k)
 				state = m3 : y2 + 1;
 				TRUE : y2;
 			esac;
+		next(state) :=
+			case
+				state = m0 & (y2 > k) : m4;
+				state = m0 & (y2 <= k) : m1;
+				state = m1 & ((y1 + y2) <= n) : m2;
+				state = m2 : m3;
+				state = m3 : m0;
+				TRUE : state;
+			esac;
+
+
+FAIRNESS
+	running
