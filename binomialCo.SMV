@@ -1,4 +1,50 @@
 MODULE main
 	VAR
 		n : 8;
+		k : 6;
+		b : 1;
+		y1 : n;
+		y2 : 1;
+		proc1 : process ALG1(b,y1,y2,n,k);
+		proc2 : process ALG2(b,y1,y2,n,k);
+MODULE ALG1(b,y1,y2,n,k)
+	VAR
+		state : {l0,l1,l2,l3}
 		
+	ASSIGN
+		init(state) := l0;
+		next(state) :=
+			case
+				state = l0 & (y1 > (n-k)) ? l1 : l3;
+				state = l1 : l2;
+				state = l2 : l0;
+			esac;
+		next(b) :=
+			case
+				state = l1 : b*y1;
+			esac;
+		next(y1) :=
+			case
+				state = l2 : y1-1;
+			esac;
+MODULE ALG2(b,y1,y2,n,k)
+	VAR
+		state : {m0,m1,m2,m3,m4}
+	
+	ASSIGN
+		init(state) := m0;
+		next(state) :=
+			case
+				state = m0 & (y2>k) ? m4 : m1;
+				state = m1 & ((y1+y2)<=n) :m2;
+				state = m2 : m3;
+				state = m3 : m0;
+			esac;
+		next(b) :=
+			case
+				state = m2 : b /y2;
+			esac;
+		next(y2) :=
+			case
+				state = m3 : y2+1;
+			esac;
