@@ -65,7 +65,7 @@ MODULE main
 		proc1 : process ALG1(b,y1,y2,n,k);
 		proc2 : process ALG2(b,y1,y2,n,k);
 	ASSIGN
-		inti(n) := 8;
+		init(n) := 8;
 		init(k) := 2;
  		init(b) := 1;
 		init(y1) := n;
