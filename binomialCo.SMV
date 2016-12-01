@@ -1,19 +1,4 @@
-MODULE main
-	VAR	
-		n  : 1..15;
-		k  : 1..15;
-		b  : 0..500;
-		y2 : 1..16;
-		y1 : 0..15;
-		proc1 : process ALG1(b,y1,y2,n,k);
-		proc2 : process ALG2(b,y1,y2,n,k);
-	ASSIGN
-		init(b) := 1;
-		init(y1) := n;
-		init(y2) := 1;
-SPEC AF ((n = 3 & k = 2) -> EF proc2.state = m4 -> EF proc1.state = l3 & b = 3)
-SPEC AF ((n = 3 & k = 2) -> EF proc1.state = l3 -> EF b = 3)
-SPEC AG (proc1.state = l0 -> EF proc1.state = l3)
+
 
 MODULE ALG1(b,y1,y2,n,k)
 
@@ -41,6 +26,9 @@ MODULE ALG1(b,y1,y2,n,k)
 			esac;
 FAIRNESS
 	running
+
+
+
 MODULE ALG2(b,y1,y2,n,k)
 	VAR
 		state : {m0,m1,m2,m3,m4};
@@ -71,3 +59,43 @@ MODULE ALG2(b,y1,y2,n,k)
 FAIRNESS
 	running
 	
+MODULE main
+	VAR	
+		n  : 1..15;
+		k  : 1..15;
+		b  : 0..500;
+		y2 : 1..16;
+		y1 : 0..15;
+		proc1 : process ALG1(b,y1,y2,n,k);
+		proc2 : process ALG2(b,y1,y2,n,k);
+	ASSIGN
+		init(b) := 1;
+		init(y1) := n;
+		init(y2) := 1;
+
+
+SPEC AG (proc1.state = l0 -> EF proc1.state = l3)
+SPEC AG (proc2.state = m0 -> EF proc2.state = m4)
+SPEC AG ((proc1.state = l0 -> EF proc1.state = l3) & (proc2.state = m0 -> EF proc2.state = m4))
+
+
+SPEC EF (proc1.state = l0 & EF proc2.state = m0)
+SPEC EF (proc1.state = l1 & EF proc2.state = m1)
+SPEC EF (proc1.state = l2 & EF proc2.state = m2)
+SPEC EF (proc1.state = l3 & EF proc2.state = m3)
+
+SPEC EF (proc1.state = l0 & EF proc2.state = m4)
+
+
+SPEC AF ((n = 3 & k = 2) -> EF proc2.state = m4 -> EF proc1.state = l3 & b = 3)
+SPEC AF ((n = 3 & k = 2) -> EF proc1.state = l3 -> EF b = 3)
+
+
+
+
+
+
+
+
+
+
