@@ -8,12 +8,12 @@ MODULE ALG1(b,y1,y2,n,k)
 		init(state) := l0;
 		next(b) :=
 			case
-				state = l1 & (b * y1) <500 : b * y1;
+				state = l1 & (b * y1) < 500 : b * y1;
 				TRUE : b;
 			esac;
 		next(y1) :=
 			case
-				state = l2 & y1 >0: y1 - 1;
+				state = l2 & y1 > 0 : y1 - 1;
 				TRUE : y1;
 			esac;
 		next(state) :=
@@ -24,8 +24,7 @@ MODULE ALG1(b,y1,y2,n,k)
 				state = l2 : l0;
 				TRUE : state;
 			esac;
-FAIRNESS
-	running
+
 
 
 
@@ -55,9 +54,6 @@ MODULE ALG2(b,y1,y2,n,k)
 				TRUE : state;
 			esac;
 
-
-FAIRNESS
-	running
 	
 MODULE main
 	VAR	
@@ -69,7 +65,9 @@ MODULE main
 		proc1 : process ALG1(b,y1,y2,n,k);
 		proc2 : process ALG2(b,y1,y2,n,k);
 	ASSIGN
-		init(b) := 1;
+		inti(n) := 8;
+		init(k) := 2;
+ 		init(b) := 1;
 		init(y1) := n;
 		init(y2) := 1;
 
